@@ -1,0 +1,576 @@
+<!DOCTYPE html>
+<html lang="sr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>APACHE II Skor Kalkulator</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap');
+
+        :root {
+            --primary-color: #5A2D82; /* Deep Royal Purple */
+            --secondary-color: #8A4ECF; /* Lighter Purple */
+            --background-gradient: linear-gradient(135deg, #2c1a3e, #1a0f25);
+            --card-background: rgba(255, 255, 255, 0.05);
+            --text-color: #EAEAEA;
+            --input-bg: rgba(0, 0, 0, 0.2);
+            --input-border: #8A4ECF;
+            --accent-color: #C398F7; /* Light Purple Accent */
+            --success-color: #4CAF50;
+            --error-color: #F44336;
+            --white-color: #FFFFFF;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: 'Poppins', sans-serif;
+            background: var(--background-gradient);
+            color: var(--text-color);
+            line-height: 1.6;
+            display: flex;
+            justify-content: center;
+            align-items: flex-start;
+            min-height: 100vh;
+            padding: 2rem 1rem;
+        }
+
+        .container {
+            width: 100%;
+            max-width: 800px;
+            background-color: var(--card-background);
+            backdrop-filter: blur(10px);
+            border-radius: 20px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.37);
+            padding: 2.5rem;
+        }
+
+        header {
+            text-align: center;
+            margin-bottom: 2.5rem;
+            border-bottom: 1px solid var(--input-border);
+            padding-bottom: 1rem;
+        }
+
+        header h1 {
+            color: var(--white-color);
+            font-size: 2.5rem;
+            font-weight: 700;
+            letter-spacing: 1px;
+        }
+
+        header p {
+            font-size: 1rem;
+            color: var(--accent-color);
+        }
+
+        .calculator-grid {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 2rem;
+        }
+        
+        .card {
+            background: var(--card-background);
+            padding: 1.5rem;
+            border-radius: 15px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .card-header {
+            color: var(--accent-color);
+            font-size: 1.5rem;
+            font-weight: 600;
+            margin-bottom: 1.5rem;
+            border-bottom: 1px solid var(--secondary-color);
+            padding-bottom: 0.5rem;
+        }
+
+        .input-group {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 1.5rem;
+        }
+
+        .form-control {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .form-control label {
+            margin-bottom: 0.5rem;
+            font-weight: 600;
+            font-size: 0.9rem;
+        }
+
+        .form-control .unit {
+            font-size: 0.8rem;
+            color: var(--accent-color);
+            margin-left: 5px;
+        }
+
+        .form-control input[type="number"],
+        .form-control select {
+            width: 100%;
+            padding: 0.75rem;
+            background-color: var(--input-bg);
+            border: 1px solid var(--input-border);
+            border-radius: 8px;
+            color: var(--text-color);
+            font-size: 1rem;
+            transition: border-color 0.3s, box-shadow 0.3s;
+        }
+
+        .form-control input[type="number"]:focus,
+        .form-control select:focus {
+            outline: none;
+            border-color: var(--accent-color);
+            box-shadow: 0 0 0 3px rgba(138, 78, 207, 0.4);
+        }
+        
+        .radio-group label, .checkbox-group label {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            cursor: pointer;
+            padding: 0.75rem;
+            border-radius: 8px;
+            border: 1px solid var(--input-border);
+            background: var(--input-bg);
+        }
+        
+        input[type="radio"], input[type="checkbox"] {
+            accent-color: var(--secondary-color);
+            width: 1.2rem;
+            height: 1.2rem;
+        }
+
+        .button-group {
+            display: flex;
+            justify-content: center;
+            gap: 1.5rem;
+            margin-top: 2.5rem;
+        }
+
+        .btn {
+            padding: 0.8rem 2rem;
+            border: none;
+            border-radius: 8px;
+            font-size: 1.1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .btn-primary {
+            background-image: linear-gradient(to right, var(--secondary-color) 0%, var(--primary-color) 51%, var(--secondary-color) 100%);
+            background-size: 200% auto;
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background-position: right center; /* change the direction of the change here */
+            transform: translateY(-2px);
+            box-shadow: 0 4px 15px rgba(138, 78, 207, 0.4);
+        }
+
+        .btn-secondary {
+            background: transparent;
+            border: 2px solid var(--secondary-color);
+            color: var(--secondary-color);
+        }
+
+        .btn-secondary:hover {
+            background: var(--secondary-color);
+            color: white;
+        }
+
+        #results {
+            margin-top: 2.5rem;
+            padding: 2rem;
+            background: rgba(0,0,0,0.2);
+            border-radius: 15px;
+            text-align: center;
+            display: none; /* Sakriveno po defaultu */
+        }
+        
+        #results h2 {
+            color: var(--white-color);
+            font-size: 2rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .results-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 1.5rem;
+            margin-bottom: 2rem;
+        }
+        
+        .result-item {
+            background: var(--card-background);
+            padding: 1rem;
+            border-radius: 10px;
+        }
+
+        .result-item h3 {
+            font-size: 1rem;
+            color: var(--accent-color);
+            margin-bottom: 0.5rem;
+        }
+
+        .result-item p {
+            font-size: 1.8rem;
+            font-weight: 700;
+            color: var(--white-color);
+        }
+
+        .total-score-container {
+            margin-bottom: 2rem;
+        }
+
+        .total-score-container h3 {
+             font-size: 1.5rem;
+             color: var(--accent-color);
+        }
+        
+        .total-score-container #totalScoreValue {
+            font-size: 4rem;
+            font-weight: 700;
+            color: var(--white-color);
+            line-height: 1.2;
+        }
+        
+        .mortality-rate {
+             background-image: linear-gradient(to right, var(--secondary-color) 0%, var(--primary-color) 51%, var(--secondary-color) 100%);
+             background-size: 200% auto;
+             padding: 1rem;
+             border-radius: 10px;
+        }
+        
+        .mortality-rate h3 {
+            color: var(--white-color);
+            font-size: 1.2rem;
+        }
+        
+        .mortality-rate #mortalityRateValue {
+            font-size: 2rem;
+            font-weight: 700;
+            color: var(--white-color);
+        }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <header>
+            <h1>APACHE II Skor Kalkulator</h1>
+            <p>Procena težine bolesti za kritično obolele pacijente</p>
+        </header>
+
+        <form id="apache-form">
+            <div class="calculator-grid">
+                
+                <div class="card">
+                    <h2 class="card-header">1. Fiziološki Parametri (APS)</h2>
+                    <div class="input-group">
+                        <div class="form-control">
+                            <label for="temp">Temperatura <span class="unit">(°C)</span></label>
+                            <input type="number" id="temp" step="0.1" placeholder="npr. 37.0" required>
+                        </div>
+                        <div class="form-control">
+                            <label for="map">Srednji arterijski pritisak (MAP) <span class="unit">(mmHg)</span></label>
+                            <input type="number" id="map" placeholder="npr. 90" required>
+                        </div>
+                        <div class="form-control">
+                            <label for="hr">Puls <span class="unit">(otkucaja/min)</span></label>
+                            <input type="number" id="hr" placeholder="npr. 80" required>
+                        </div>
+                        <div class="form-control">
+                            <label for="rr">Respiratorna frekvencija <span class="unit">(udisaja/min)</span></label>
+                            <input type="number" id="rr" placeholder="npr. 16" required>
+                        </div>
+                        <div class="form-control">
+                            <label for="ph">Arterijski pH</label>
+                            <input type="number" id="ph" step="0.01" placeholder="npr. 7.40" required>
+                        </div>
+                        <div class="form-control">
+                            <label for="sodium">Natrijum u serumu <span class="unit">(mmol/L)</span></label>
+                            <input type="number" id="sodium" placeholder="npr. 140" required>
+                        </div>
+                        <div class="form-control">
+                            <label for="potassium">Kalijum u serumu <span class="unit">(mmol/L)</span></label>
+                            <input type="number" id="potassium" step="0.1" placeholder="npr. 4.0" required>
+                        </div>
+                         <div class="form-control">
+                            <label for="creatinine">Kreatinin u serumu <span class="unit">(mg/dL)</span></label>
+                            <input type="number" id="creatinine" step="0.1" placeholder="npr. 1.0" required>
+                        </div>
+                        <div class="form-control">
+                             <label class="checkbox-group">
+                                <input type="checkbox" id="arf">
+                                Pacijent ima akutnu bubrežnu insuficijenciju
+                            </label>
+                        </div>
+                        <div class="form-control">
+                            <label for="hct">Hematokrit <span class="unit">(%)</span></label>
+                            <input type="number" id="hct" step="0.1" placeholder="npr. 45" required>
+                        </div>
+                        <div class="form-control">
+                            <label for="wbc">Leukociti (WBC) <span class="unit">(x10³/mm³)</span></label>
+                            <input type="number" id="wbc" step="0.1" placeholder="npr. 8.0" required>
+                        </div>
+                        <div class="form-control">
+                            <label for="gcs">Glasgow Coma Scale (GCS) <span class="unit">(3-15)</span></label>
+                            <input type="number" id="gcs" min="3" max="15" placeholder="npr. 15" required>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="card">
+                    <h2 class="card-header">Oksigenacija</h2>
+                     <div class="input-group">
+                        <div class="form-control">
+                            <label for="fio2">FiO₂ (frakcija udahnutog kiseonika)</label>
+                            <input type="number" id="fio2" step="0.01" min="0.21" max="1.0" placeholder="npr. 0.4" required>
+                        </div>
+                        <div id="oxygenation-input-container">
+                             </div>
+                    </div>
+                </div>
+
+                <div class="card">
+                     <h2 class="card-header">2. i 3. Starost i Hronične Bolesti</h2>
+                     <div class="input-group">
+                        <div class="form-control">
+                            <label for="age">Starost pacijenta <span class="unit">(godine)</span></label>
+                            <input type="number" id="age" placeholder="npr. 65" required>
+                        </div>
+                        <div class="form-control">
+                            <label>Status hroničnih bolesti</label>
+                            <select id="chronic">
+                                <option value="0">Nema teških hroničnih bolesti</option>
+                                <option value="2">Teške bolesti (elektivni post-operativni pacijent)</option>
+                                <option value="5">Teške bolesti (ne-operativni ili hitni post-operativni pacijent)</option>
+                            </select>
+                        </div>
+                     </div>
+                </div>
+            </div>
+
+            <div class="button-group">
+                <button type="submit" class="btn btn-primary">Izračunaj Skor</button>
+                <button type="reset" class="btn btn-secondary">Resetuj</button>
+            </div>
+        </form>
+
+        <div id="results">
+            <h2>Rezultati APACHE II Skora</h2>
+            
+            <div class="total-score-container">
+                 <h3>Ukupan Skor</h3>
+                 <p id="totalScoreValue">0</p>
+            </div>
+            
+            <div class="results-grid">
+                <div class="result-item">
+                    <h3>Fiziološki Skor (APS)</h3>
+                    <p id="apsScoreValue">0</p>
+                </div>
+                <div class="result-item">
+                    <h3>Skor za Starost</h3>
+                    <p id="ageScoreValue">0</p>
+                </div>
+                <div class="result-item">
+                    <h3>Skor za Hr. Bolesti</h3>
+                    <p id="chronicScoreValue">0</p>
+                </div>
+            </div>
+
+            <div class="mortality-rate">
+                <h3>Procenjena stopa mortaliteta</h3>
+                <p id="mortalityRateValue">0%</p>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const form = document.getElementById('apache-form');
+            const resultsSection = document.getElementById('results');
+            const fio2Input = document.getElementById('fio2');
+            const oxygenationContainer = document.getElementById('oxygenation-input-container');
+
+            // Dinamički prikaz polja za PaO2 ili A-aDO2 na osnovu FiO2
+            const updateOxygenationInput = () => {
+                const fio2 = parseFloat(fio2Input.value);
+                oxygenationContainer.innerHTML = ''; // Očisti prethodni input
+
+                if (fio2 >= 0.5) {
+                    oxygenationContainer.innerHTML = `
+                        <div class="form-control">
+                            <label for="aado2">A-aDO₂ <span class="unit">(mmHg)</span></label>
+                            <input type="number" id="aado2" placeholder="npr. 300" required>
+                        </div>
+                    `;
+                } else if (fio2 > 0 && fio2 < 0.5) {
+                    oxygenationContainer.innerHTML = `
+                        <div class="form-control">
+                            <label for="pao2">PaO₂ <span class="unit">(mmHg)</span></label>
+                            <input type="number" id="pao2" placeholder="npr. 80" required>
+                        </div>
+                    `;
+                }
+            };
+            
+            fio2Input.addEventListener('input', updateOxygenationInput);
+            updateOxygenationInput(); // Pozovi jednom na početku
+
+            form.addEventListener('submit', function(e) {
+                e.preventDefault();
+                calculateApacheII();
+            });
+            
+            form.addEventListener('reset', function() {
+                resultsSection.style.display = 'none';
+                updateOxygenationInput();
+            });
+
+            function calculateApacheII() {
+                // Preuzimanje vrednosti sa forme
+                const temp = parseFloat(document.getElementById('temp').value);
+                const map = parseFloat(document.getElementById('map').value);
+                const hr = parseFloat(document.getElementById('hr').value);
+                const rr = parseFloat(document.getElementById('rr').value);
+                const ph = parseFloat(document.getElementById('ph').value);
+                const sodium = parseFloat(document.getElementById('sodium').value);
+                const potassium = parseFloat(document.getElementById('potassium').value);
+                const creatinine = parseFloat(document.getElementById('creatinine').value);
+                const isArf = document.getElementById('arf').checked;
+                const hct = parseFloat(document.getElementById('hct').value);
+                const wbc = parseFloat(document.getElementById('wbc').value);
+                const gcs = parseInt(document.getElementById('gcs').value);
+                const age = parseInt(document.getElementById('age').value);
+                const chronic = parseInt(document.getElementById('chronic').value);
+                const fio2 = parseFloat(fio2Input.value);
+
+                let apsScore = 0;
+
+                // 1. Temperatura
+                if (temp >= 41 || temp <= 29.9) apsScore += 4;
+                else if (temp >= 39 || temp <= 31.9) apsScore += 3;
+                else if (temp <= 33.9) apsScore += 2;
+                else if (temp >= 38.5 || temp <= 35.9) apsScore += 1;
+
+                // 2. MAP
+                if (map >= 160 || map <= 49) apsScore += 4;
+                else if (map >= 130) apsScore += 3;
+                else if (map >= 110 || map <= 69) apsScore += 2;
+
+                // 3. Puls
+                if (hr >= 180 || hr <= 39) apsScore += 4;
+                else if (hr >= 140) apsScore += 3;
+                else if (hr >= 110 || hr <= 54) apsScore += 2;
+                
+                // 4. Respiratorna frekvencija
+                if (rr >= 50 || rr <= 5) apsScore += 4;
+                else if (rr >= 35) apsScore += 3;
+                else if (rr >= 25 || rr <= 9) apsScore += 2;
+                else if (rr <= 11) apsScore += 1;
+                
+                // 5. Oksigenacija
+                if (fio2 >= 0.5) {
+                    const aado2 = parseFloat(document.getElementById('aado2').value);
+                    if (aado2 >= 500) apsScore += 4;
+                    else if (aado2 >= 350) apsScore += 3;
+                    else if (aado2 >= 200) apsScore += 2;
+                } else {
+                    const pao2 = parseFloat(document.getElementById('pao2').value);
+                    if (pao2 < 55) apsScore += 4;
+                    else if (pao2 <= 60) apsScore += 3;
+                    else if (pao2 <= 70) apsScore += 1;
+                }
+
+                // 6. Arterijski pH
+                if (ph >= 7.7 || ph < 7.15) apsScore += 4;
+                else if (ph >= 7.6 || ph <= 7.24) apsScore += 3;
+                else if (ph <= 7.32) apsScore += 2;
+                else if (ph >= 7.5) apsScore += 1;
+                
+                // 7. Natrijum
+                if (sodium >= 180 || sodium <= 110) apsScore += 4;
+                else if (sodium >= 160 || sodium <= 119) apsScore += 3;
+                else if (sodium >= 155 || sodium <= 129) apsScore += 2;
+                else if (sodium >= 150) apsScore += 1;
+                
+                // 8. Kalijum
+                if (potassium >= 7 || potassium < 2.5) apsScore += 4;
+                else if (potassium >= 6) apsScore += 3;
+                else if (potassium <= 2.9) apsScore += 2;
+                else if (potassium >= 5.5 || potassium <= 3.4) apsScore += 1;
+
+                // 9. Kreatinin
+                let creatinineScore = 0;
+                if (creatinine >= 3.5) creatinineScore = 4;
+                else if (creatinine >= 2.0) creatinineScore = 3;
+                else if (creatinine >= 1.5) creatinineScore = 2;
+                else if (creatinine < 0.6) creatinineScore = 2;
+                if (isArf) creatinineScore *= 2;
+                apsScore += creatinineScore;
+
+                // 10. Hematokrit
+                if (hct >= 60 || hct < 20) apsScore += 4;
+                else if (hct >= 50 || hct < 30) apsScore += 2;
+                else if (hct >= 46) apsScore += 1;
+                
+                // 11. Leukociti (WBC)
+                if (wbc >= 40 || wbc < 1) apsScore += 4;
+                else if (wbc >= 20 || wbc < 3) apsScore += 2;
+                else if (wbc >= 15) apsScore += 1;
+
+                // 12. GCS
+                apsScore += (15 - gcs);
+
+                // Bodovi za starost
+                let ageScore = 0;
+                if (age >= 75) ageScore = 6;
+                else if (age >= 65) ageScore = 5;
+                else if (age >= 55) ageScore = 3;
+                else if (age >= 45) ageScore = 2;
+                
+                // Bodovi za hronične bolesti su već preuzeti kao 'chronic'
+                
+                const totalScore = apsScore + ageScore + chronic;
+                
+                // Procena mortaliteta
+                let mortalityRate = "N/A";
+                if (totalScore <= 5) mortalityRate = "~0-4%";
+                else if (totalScore <= 10) mortalityRate = "~8-15%";
+                else if (totalScore <= 15) mortalityRate = "~15-25%";
+                else if (totalScore <= 20) mortalityRate = "~25-40%";
+                else if (totalScore <= 25) mortalityRate = "~40-55%";
+                else if (totalScore <= 30) mortalityRate = "~70-75%";
+                else if (totalScore > 30) mortalityRate = "~85-95%";
+                
+                // Prikaz rezultata
+                document.getElementById('apsScoreValue').textContent = apsScore;
+                document.getElementById('ageScoreValue').textContent = ageScore;
+                document.getElementById('chronicScoreValue').textContent = chronic;
+                document.getElementById('totalScoreValue').textContent = totalScore;
+                document.getElementById('mortalityRateValue').textContent = mortalityRate;
+
+                resultsSection.style.display = 'block';
+                resultsSection.scrollIntoView({ behavior: 'smooth' });
+            }
+        });
+    </script>
+
+</body>
+</html>
